@@ -10,22 +10,16 @@ import { Label } from "@/components/ui/label";
 import { GitHubIcon, GoogleIcon } from "@/components/auth/social-icons";
 
 const SOCIAL_PROVIDERS = [
-  {
-    id: "google" as const,
-    label: "Google",
-    Icon: GoogleIcon,
-  },
-  {
-    id: "github" as const,
-    label: "GitHub",
-    Icon: GitHubIcon,
-  },
+  { id: "google" as const, label: "Google", Icon: GoogleIcon },
+  { id: "github" as const, label: "GitHub", Icon: GitHubIcon },
 ];
 
-export function SignInForm() {
+export function SignUpForm() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -40,15 +34,26 @@ export function SignInForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
     setIsPending(true);
     try {
-      const { error } = await authClient.signIn.email({
+      const { error } = await authClient.signUp.email({
         email,
         password,
+        name: name.trim(),
         callbackURL: "/dashboard",
       });
       if (error) {
-        setError(error.message ?? "Invalid email or password.");
+        setError(error.message ?? "Could not create your account.");
         return;
       }
       router.push("/dashboard");
@@ -70,7 +75,7 @@ export function SignInForm() {
             onClick={() => handleSocial(id)}
           >
             <Icon className="h-4 w-4" />
-            Continue with {label}
+            Sign up with {label}
           </Button>
         ))}
       </div>
@@ -81,12 +86,24 @@ export function SignInForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            or continue with email
+            or sign up with email
           </span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Ada Lovelace"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -104,10 +121,22 @@ export function SignInForm() {
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
-            autoComplete="current-password"
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="confirm-password">Confirm password</Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            placeholder="Repeat your password"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
         </div>
@@ -119,14 +148,14 @@ export function SignInForm() {
         )}
 
         <Button type="submit" className="h-10 w-full" disabled={isPending}>
-          {isPending ? "Signing in…" : "Sign in"}
+          {isPending ? "Creating account…" : "Create account"}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
-          Sign up
+        Already have an account?{" "}
+        <Link href="/signin" className="font-medium text-foreground underline-offset-4 hover:underline">
+          Sign in
         </Link>
       </p>
     </div>
