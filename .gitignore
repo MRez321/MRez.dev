@@ -46,3 +46,5 @@ A-old
 # Local SQLite Database
 data/sqlite.db
 data/*.db
+
+actions-runner
