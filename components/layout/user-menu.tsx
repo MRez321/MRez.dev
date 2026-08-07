@@ -14,17 +14,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   CreditCard,
+  FilePenLine,
   KeyRound,
   LayoutDashboard,
   LogOut,
+  Shield,
   Star,
   UserRound,
 } from "lucide-react";
+import { can, roleOf } from "@/features/auth/permissions";
 
 type InitialUser = {
   name: string;
   email: string;
   image?: string | null;
+  role?: string;
 };
 
 const MENU_ITEMS = [
@@ -47,6 +51,15 @@ function initials(name: string) {
 export function UserMenu({ initialUser }: { initialUser: InitialUser }) {
   const { data: session } = authClient.useSession();
   const user = session?.user ?? initialUser;
+  const role = roleOf(user.role);
+
+  const items = [...MENU_ITEMS];
+  if (can(role, "post:create")) {
+    items.push({ href: "/dashboard/blog", label: "My posts", Icon: FilePenLine });
+  }
+  if (can(role, "admin:access")) {
+    items.push({ href: "/admin", label: "Admin", Icon: Shield });
+  }
 
   return (
     <DropdownMenu>
@@ -72,7 +85,7 @@ export function UserMenu({ initialUser }: { initialUser: InitialUser }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {MENU_ITEMS.map(({ href, label, Icon }) => (
+        {items.map(({ href, label, Icon }) => (
           <DropdownMenuItem key={href} asChild>
             <Link href={href} className="cursor-pointer">
               <Icon className="mr-2 h-4 w-4" />

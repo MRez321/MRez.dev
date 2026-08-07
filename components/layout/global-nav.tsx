@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { AuthButtons, UserMenu } from "./user-menu";
 import { MobileNav } from "./mobile-nav";
 import { NavLinks, type NavLinkItem } from "./nav-links";
+import { ThemeToggle } from "./theme-toggle";
 
 const PUBLIC_LINKS: NavLinkItem[] = [
   { href: "/", label: "Home" },
@@ -32,7 +33,8 @@ export default async function GlobalNavigation() {
           <NavLinks links={links} />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
           {session ? (
             <UserMenu initialUser={session.user} />
           ) : (

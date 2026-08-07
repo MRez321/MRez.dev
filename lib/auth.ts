@@ -8,6 +8,12 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
+  user: {
+    additionalFields: {
+      role: { type: "string", defaultValue: "user", input: false },
+      banned: { type: "boolean", defaultValue: false, input: false },
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
