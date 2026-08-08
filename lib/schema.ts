@@ -136,3 +136,73 @@ export const analyticsEvent = sqliteTable(
     },
     (t) => [index("analytics_event_name_createdAt_idx").on(t.name, t.createdAt)]
 );
+
+// --- Public API keys ---------------------------------------------------------
+
+export const apiKeyStatuses = ["active", "revoked"] as const;
+export type ApiKeyStatus = (typeof apiKeyStatuses)[number];
+
+/**
+ * API keys for the public v1 API (Bearer auth). Only the SHA-256 hash and a
+ * short display prefix are stored — the raw key is shown exactly once at
+ * creation time, never again.
+ */
+export const apiKey = sqliteTable(
+    "api_key",
+    {
+        id: text("id").primaryKey(),
+        userId: text("userId")
+            .notNull()
+            .references(() => user.id, { onDelete: "cascade" }),
+        name: text("name").notNull(),
+        /** Display prefix, e.g. "mrez_live_1a2b3c4d" — never the full key. */
+        prefix: text("prefix").notNull(),
+        /** SHA-256 hex of the full key; the only lookup column. */
+        keyHash: text("keyHash").notNull().unique(),
+        status: text("status", { enum: apiKeyStatuses }).notNull().default("active"),
+        /** Max requests per minute (fixed window). */
+        rateLimitPerMinute: integer("rateLimitPerMinute").notNull().default(60),
+        /** Monthly request quota; 0 = unlimited. */
+        monthlyRequests: integer("monthlyRequests").notNull().default(0),
+        /** Monthly upload quota in bytes; 0 = unlimited. */
+        monthlyBytes: integer("monthlyBytes").notNull().default(0),
+        /** Max bytes for a single upload. */
+        maxFileBytes: integer("maxFileBytes").notNull().default(10 * 1024 * 1024),
+        lastUsedAt: integer("lastUsedAt", { mode: "timestamp" }),
+        createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+        expiresAt: integer("expiresAt", { mode: "timestamp" }),
+        revokedAt: integer("revokedAt", { mode: "timestamp" }),
+    },
+    (t) => [index("api_key_userId_idx").on(t.userId)]
+);
+
+/**
+ * One row per authenticated v1 API request — the source of truth for monthly
+ * quota accounting and per-key usage in the dashboard.
+ */
+export const apiKeyUsage = sqliteTable(
+    "api_key_usage",
+    {
+        id: text("id").primaryKey(),
+        keyId: text("keyId")
+            .notNull()
+            .references(() => apiKey.id, { onDelete: "cascade" }),
+        endpoint: text("endpoint").notNull(),
+        /** "ok" | "rejected" */
+        status: text("status").notNull(),
+        bytesIn: integer("bytesIn").notNull().default(0),
+        bytesOut: integer("bytesOut").notNull().default(0),
+        durationMs: integer("durationMs").notNull().default(0),
+        createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    },
+    (t) => [index("api_key_usage_keyId_createdAt_idx").on(t.keyId, t.createdAt)]
+);
+
+export const apiKeyRelations = relations(apiKey, ({ one, many }) => ({
+    user: one(user, { fields: [apiKey.userId], references: [user.id] }),
+    usage: many(apiKeyUsage),
+}));
+
+export const apiKeyUsageRelations = relations(apiKeyUsage, ({ one }) => ({
+    key: one(apiKey, { fields: [apiKeyUsage.keyId], references: [apiKey.id] }),
+}));

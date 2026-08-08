@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
-  title: "MRez — Mohammadreza Mousavi",
+  title: "MRez — Reza Mousavi",
   description:
-    "Mohammadreza Mousavi — full-stack developer building Laravel packages and modern web apps. Blog notes, mini tools, and open-source projects.",
+    "Reza Mousavi — full-stack developer building Laravel packages and modern web apps. Blog notes, mini tools, and open-source projects.",
   alternates: {
     canonical: "/",
     types: {
@@ -55,7 +55,7 @@ const siteJsonLd = {
     },
     {
       "@type": "Person",
-      name: "Mohammadreza Mousavi",
+      name: "Reza Mousavi",
       url: `${APP_URL}/portfolio`,
       jobTitle: "Full-stack Developer",
       knowsAbout: ["Laravel", "PHP", "Next.js", "TypeScript", "React", "Web APIs"],

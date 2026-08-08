@@ -36,11 +36,11 @@ export const APP_REGISTRY: AppMeta[] = [
     name: "Image Optimizer",
     tagline: "Compress images right in your browser",
     description:
-      "Drop in an image, tune the quality, and download a smaller version — nothing is uploaded.",
+      "Drop in an image, tune the quality, and download a smaller version — nothing is uploaded. A server-side API with rate limits is also available.",
     href: "/apps/image-optimizer",
     icon: ImageIcon,
     status: "live",
     featured: true,
-    tags: ["images", "client-side"],
+    tags: ["images", "client-side", "api"],
   },
 ];

@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { GitHubIcon } from "@/components/auth/social-icons";
 
 export const metadata = {
-  title: "MRez — Mohammadreza Mousavi",
+  title: "MRez — Reza Mousavi",
   description:
-    "Mohammadreza Mousavi — full-stack developer building Laravel packages and modern web apps. Blog notes, mini tools, and open-source projects.",
+    "Reza Mousavi — full-stack developer building Laravel packages and modern web apps. Blog notes, mini tools, and open-source projects.",
 };
 
 const SECTIONS = [
@@ -55,7 +55,7 @@ export default async function Home() {
             className="gap-1.5 border-primary/30 text-primary"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Mohammadreza Mousavi
+            Reza Mousavi
           </Badge>
 
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">

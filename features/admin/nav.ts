@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BarChart3, FileText, LayoutDashboard, Users } from "lucide-react";
+import { BarChart3, FileText, KeyRound, LayoutDashboard, Users } from "lucide-react";
 import type { Permission } from "@/features/auth/permissions";
 
 /**
@@ -36,6 +36,13 @@ export const ADMIN_NAV: readonly AdminNavItem[] = [
     description: "Roles & accounts",
     Icon: Users,
     permission: "user:manage",
+  },
+  {
+    href: "/admin/api-keys",
+    label: "API Keys",
+    description: "All keys & usage",
+    Icon: KeyRound,
+    permission: "admin:access",
   },
   {
     href: "/admin/analytics",

@@ -16,7 +16,7 @@ import { GitHubIcon } from "@/components/auth/social-icons";
 export const metadata = {
   title: "Portfolio — MRez",
   description:
-    "Mohammadreza Mousavi — full-stack developer building Laravel packages and modern web apps.",
+    "Reza Mousavi — full-stack developer building Laravel packages and modern web apps.",
 };
 
 const SKILLS = [
@@ -86,7 +86,7 @@ export default async function PortfolioPage() {
           </Badge>
 
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
-            Mohammadreza{" "}
+            Reza{" "}
             <span className="bg-gradient-to-r from-primary via-primary to-foreground bg-clip-text text-transparent">
               Mousavi
             </span>

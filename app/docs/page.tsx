@@ -56,11 +56,11 @@ export default function DocsPage() {
       <div className="mt-8 rounded-xl border border-dashed p-6">
         <h2 className="font-semibold">API documentation</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          The public API is still being shaped — endpoint docs will land here as
-          they stabilize.
+          The Image Optimizer API is live — server-side image optimization with
+          API keys, rate limits, and monthly quotas.
         </p>
         <Button asChild variant="outline" className="mt-4">
-          <Link href="/apps">Browse mini apps instead</Link>
+          <Link href="/docs/api">Read the API docs</Link>
         </Button>
       </div>
     </main>

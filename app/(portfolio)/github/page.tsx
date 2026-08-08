@@ -9,7 +9,7 @@ import { GitHubIcon } from "@/components/auth/social-icons";
 
 export const metadata = {
   title: "GitHub — MRez",
-  description: "Open-source projects by Mohammadreza Mousavi (@mrezdev).",
+  description: "Open-source projects by Reza Mousavi (@mrezdev).",
 };
 
 export default async function GitHubPage() {
