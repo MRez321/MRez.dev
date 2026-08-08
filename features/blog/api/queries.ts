@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, like, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, like, lt, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { post, postTag, tag, user } from "@/lib/schema";
 
@@ -131,6 +131,96 @@ export async function getAllPosts() {
     orderBy: [desc(post.updatedAt)],
   });
   return rows.map(toPostWithMeta);
+}
+
+/** Every published post, newest first (RSS feed). */
+export async function getPublishedPostsForFeed() {
+  const rows = await db.query.post.findMany({
+    ...POST_WITH_META,
+    where: eq(post.status, "published"),
+    orderBy: [desc(post.publishedAt)],
+  });
+  return rows.map(toPostWithMeta);
+}
+
+/** Featured, published posts for the homepage spotlight (newest first). */
+export async function getFeaturedPosts(limit = 3) {
+  const rows = await db.query.post.findMany({
+    ...POST_WITH_META,
+    where: and(eq(post.status, "published"), eq(post.featured, true)),
+    orderBy: [desc(post.publishedAt), desc(post.createdAt)],
+    limit,
+  });
+  return rows.map(toPostWithMeta);
+}
+
+/**
+ * Posts sharing at least one tag with `current`, ranked by tag overlap,
+ * excluding the post itself. Empty when the post has no tags or nothing shares one.
+ */
+export async function getRelatedPosts(current: PostWithMeta, limit = 3) {
+  const tagIds = current.tags.map((t) => t.tagId);
+  if (tagIds.length === 0) return [];
+
+  const candidates = await db
+    .select({ id: postTag.postId, overlap: count(postTag.postId) })
+    .from(postTag)
+    .where(inArray(postTag.tagId, tagIds))
+    .groupBy(postTag.postId)
+    .orderBy(desc(count(postTag.postId)))
+    .limit(limit * 2);
+
+  const ids = candidates
+    .map((c) => c.id)
+    .filter((id) => id !== current.id)
+    .slice(0, limit);
+  if (ids.length === 0) return [];
+
+  const rows = await db.query.post.findMany({
+    ...POST_WITH_META,
+    where: and(eq(post.status, "published"), inArray(post.id, ids)),
+    orderBy: [desc(post.publishedAt), desc(post.createdAt)],
+  });
+  return rows.map(toPostWithMeta);
+}
+
+/** Newer/older published posts around `slug` for prev/next navigation. */
+export async function getAdjacentPosts(slug: string) {
+  const current = await db.query.post.findFirst({
+    where: and(eq(post.slug, slug), eq(post.status, "published")),
+    columns: { id: true, publishedAt: true },
+  });
+  if (!current?.publishedAt) return { prev: null, next: null };
+
+  const [prev, next] = await Promise.all([
+    db.query.post.findFirst({
+      ...POST_WITH_META,
+      where: and(eq(post.status, "published"), lt(post.publishedAt, current.publishedAt)),
+      orderBy: [desc(post.publishedAt)],
+    }),
+    db.query.post.findFirst({
+      ...POST_WITH_META,
+      where: and(eq(post.status, "published"), gt(post.publishedAt, current.publishedAt)),
+      orderBy: [asc(post.publishedAt)],
+    }),
+  ]);
+
+  return {
+    prev: prev ? toPostWithMeta(prev) : null,
+    next: next ? toPostWithMeta(next) : null,
+  };
+}
+
+/** Aggregate numbers for the blog hero (published count + total views). */
+export async function getBlogStats() {
+  const [published, views] = await Promise.all([
+    db.select({ value: count() }).from(post).where(eq(post.status, "published")),
+    db
+      .select({ value: sql<number>`COALESCE(SUM(${post.views}), 0)` })
+      .from(post)
+      .where(eq(post.status, "published")),
+  ]);
+  return { published: published[0].value, views: views[0].value };
 }
 
 export type Analytics = {

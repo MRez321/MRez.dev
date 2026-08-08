@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { trackEvent } from "@/lib/analytics";
 
 export function BlogSearchForm({ initialQ }: { initialQ?: string }) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function BlogSearchForm({ initialQ }: { initialQ?: string }) {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const q = value.trim();
+    if (q) trackEvent("search", { query: q });
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     router.push(params.size ? `/blog?${params.toString()}` : "/blog");

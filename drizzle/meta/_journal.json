@@ -15,6 +15,13 @@
       "when": 1786085939152,
       "tag": "0001_round_betty_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786133541646,
+      "tag": "0002_analytics_event",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,6 +57,7 @@ export function SignUpForm() {
         setError(error.message ?? "Could not create your account.");
         return;
       }
+      trackEvent("signup", { method: "email" });
       router.push("/dashboard");
       router.refresh();
     } finally {

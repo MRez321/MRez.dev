@@ -201,7 +201,7 @@
         {
           "id": "E-2",
           "text": "Analytics overview – integrate Google Analytics + Plausible stats (via their APIs), show page views, active users.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "E-3",
@@ -237,7 +237,7 @@
         {
           "id": "F-4",
           "text": "SEO for each post – dynamic metadata (title, description, OG image generated using sharp or @vercel/og).",
-          "checked": false
+          "checked": true
         },
         {
           "id": "F-5",
@@ -435,22 +435,22 @@
         {
           "id": "N-0",
           "text": "Environment config – NEXT_PUBLIC_GA_ID, NEXT_PUBLIC_PLAUSIBLE_DOMAIN.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "N-1",
           "text": "Script injection – in root layout using next/script with strategies.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "N-2",
           "text": "Custom events – track signups, blog views, API usage (optional).",
-          "checked": false
+          "checked": true
         },
         {
           "id": "N-3",
           "text": "Admin dashboard analytics – fetch GA4 data via Google Analytics Data API (server‑side) or embed reports; fetch Plausible stats via its API.",
-          "checked": false
+          "checked": true
         }
       ]
     },
@@ -482,22 +482,22 @@
         {
           "id": "P-0",
           "text": "Metadata API – generateMetadata for all important pages.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "P-1",
           "text": "Open Graph images – dynamic generation for blog posts using @vercel/og or sharp.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "P-2",
           "text": "Sitemap – sitemap.ts at root that includes all public pages.",
-          "checked": false
+          "checked": true
         },
         {
           "id": "P-3",
           "text": "robots.txt – allow all, point to sitemap.",
-          "checked": false
+          "checked": true
         }
       ]
     },

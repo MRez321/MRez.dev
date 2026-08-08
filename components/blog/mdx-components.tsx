@@ -30,15 +30,10 @@ const heading = (
 };
 
 function CodeBlock({ className, children, ...rest }: ComponentProps<"code">) {
-  const match = /language-(\w+)/.exec(className ?? "");
-  const lang = match?.[1] ? (
-    <span className="float-right font-sans text-xs uppercase tracking-wider opacity-50">
-      {match[1]}
-    </span>
-  ) : null;
+  // Language label + copy button are added client-side by <CodeCopy />,
+  // which wraps every <pre> in <article> after hydration.
   return (
     <code {...rest} className={className}>
-      {lang}
       {children}
     </code>
   );

@@ -4,6 +4,7 @@ import {
     text,
     integer,
     primaryKey,
+    index,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
@@ -107,3 +108,31 @@ export const postTagRelations = relations(postTag, ({ one }) => ({
     post: one(post, { fields: [postTag.postId], references: [post.id] }),
     tag: one(tag, { fields: [postTag.tagId], references: [tag.id] }),
 }));
+
+// --- Analytics --------------------------------------------------------------
+
+/**
+ * First-party event log fed by a sendBeacon from the client tracker
+ * (`lib/analytics.ts`). Raw rows are aggregated in the admin dashboard;
+ * old rows are pruned opportunistically by the tracking route.
+ *
+ * `createdAt` is stored in unix seconds (drizzle `timestamp` mode).
+ */
+export const analyticsEvent = sqliteTable(
+    "analytics_event",
+    {
+        id: text("id").primaryKey(),
+        /** "pageview" or a custom event name (signup, theme_toggle, ...). */
+        name: text("name").notNull(),
+        /** Client path, e.g. "/blog/foo". */
+        path: text("path"),
+        /** document.referrer at pageview time. */
+        referrer: text("referrer"),
+        /** Stable per-browser id from localStorage (no cookies). */
+        visitorId: text("visitorId"),
+        /** JSON object with event-specific fields. */
+        props: text("props"),
+        createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    },
+    (t) => [index("analytics_event_name_createdAt_idx").on(t.name, t.createdAt)]
+);

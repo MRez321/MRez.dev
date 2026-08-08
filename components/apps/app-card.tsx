@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { TrackedAnchor } from "@/components/apps/tracked-anchor";
 import type { AppMeta } from "@/features/apps/registry";
 
 export function AppCard({ app }: { app: AppMeta }) {
@@ -49,5 +50,14 @@ export function AppCard({ app }: { app: AppMeta }) {
     return <div aria-disabled>{content}</div>;
   }
 
-  return <a href={app.href} className="block h-full">{content}</a>;
+  return (
+    <TrackedAnchor
+      href={app.href}
+      eventName="app_open"
+      eventProps={{ app: app.slug }}
+      className="block h-full"
+    >
+      {content}
+    </TrackedAnchor>
+  );
 }
